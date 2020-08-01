@@ -15,6 +15,7 @@ var direction_input = Vector2.ZERO
 var jump_input
 var jump_input_cancel
 var physics_delta
+var on_floor
 
 func read_direction_input():
 	direction_input.x = Input.get_action_strength('player_right') - Input.get_action_strength('player_left')
@@ -34,15 +35,19 @@ func apply_friction():
 func apply_gravity():
 	motion.y = min(motion.y + (PLAYER_GRAVITY * physics_delta), PLAYER_MAX_FALL_SPEED)
 
+func apply_jump_start():
+	if jump_input and on_floor:
+		motion.y = motion.y + (PLAYER_JUMP_FORCE)
+		print("player jump: start")
+
+func apply_jump_cancel():
+	if jump_input_cancel and motion.y < PLAYER_JUMP_FORCE / 2:
+		motion.y = PLAYER_JUMP_FORCE / 2
+		print("player jump: cancel")
+
 func apply_jump():
-	if jump_input:
-		if is_on_floor():
-			motion.y = motion.y + (PLAYER_JUMP_FORCE)
-	else:
-		if !is_on_floor():
-			if jump_input_cancel:
-				if motion.y < PLAYER_JUMP_FORCE / 2:
-					motion.y = PLAYER_JUMP_FORCE / 2
+	apply_jump_start()
+	apply_jump_cancel()
 
 func resolve_motion():
 	motion = move_and_slide(motion, Vector2.UP, false, 4, PLAYER_MAX_SLOPE_ANGLE)
@@ -55,10 +60,15 @@ func read_input():
 	read_direction_input()
 	read_jump_input()
 
+func check_on_floor():
+	on_floor = is_on_floor()
+
 func _physics_process(delta):
 	physics_delta = delta
 
 	read_input()
+
+	check_on_floor()
 
 	determine_sprite_direction()
 
