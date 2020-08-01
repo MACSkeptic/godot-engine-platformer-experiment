@@ -114,9 +114,17 @@ func resolve_motion():
 	state.motion = move_and_slide_with_snap(state.motion, state.snap_vector, Vector2.UP, true, 4, PLAYER_MAX_SLOPE_ANGLE)
 	hacky_fixes_for_sloppy_slopes_after_move()
 
+func look_forward_based_on_movement():
+	SPRITE.scale.x = sign(state.direction_input.x)
+
+func look_forward_based_on_movement_and_mouse():
+	SPRITE_ANIMATOR.playback_speed = state.direction_input.x * SPRITE.scale.x
+
 func determine_sprite_direction():
+	SPRITE.scale.x = sign(get_local_mouse_position().x)
+
 	if state.direction_input.x != 0:
-		SPRITE.flip_h = state.direction_input.x < 0
+		look_forward_based_on_movement_and_mouse()
 
 func read_input():
 	read_direction_input()
@@ -144,6 +152,10 @@ func create_dust_effect():
 	get_tree().current_scene.add_child(dust_effect)
 	dust_effect.global_position = dust_position
 
+func after_move():
+	buffer_for_jump_on_air()
+	create_dust_when_landed()
+
 func _physics_process(delta):
 	state.physics_delta = delta
 
@@ -162,5 +174,4 @@ func _physics_process(delta):
 	play_animation()
 
 	resolve_motion()
-	buffer_for_jump_on_air()
-	create_dust_when_landed()
+	after_move()
