@@ -19,6 +19,8 @@ var jump_input = false
 var jump_input_cancel = false
 var physics_delta = 0
 var on_floor = false
+var was_on_floor_before_move = false
+var is_on_floor_after_move = false
 
 func reset_snap_vector():
 	snap_vector = Vector2.DOWN * 4
@@ -57,8 +59,18 @@ func apply_jump():
 	apply_jump_start()
 	apply_jump_cancel()
 
+func hacky_fixes_for_sloppy_slopes_before_move():
+	was_on_floor_before_move = is_on_floor()
+
+func hacky_fixes_for_sloppy_slopes_after_move():
+	is_on_floor_after_move = is_on_floor()
+	if was_on_floor_before_move and !is_on_floor_after_move and !jump_input:
+		motion.y = 0
+
 func resolve_motion():
+	hacky_fixes_for_sloppy_slopes_before_move()
 	motion = move_and_slide_with_snap(motion, snap_vector, Vector2.UP, true, 4, PLAYER_MAX_SLOPE_ANGLE)
+	hacky_fixes_for_sloppy_slopes_after_move()
 
 func determine_sprite_direction():
 	if direction_input.x != 0:
