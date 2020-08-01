@@ -21,6 +21,9 @@ var physics_delta = 0
 var on_floor = false
 var was_on_floor_before_move = false
 var is_on_floor_after_move = false
+var position_before_move = Vector2.ZERO
+var position_after_move = Vector2.ZERO
+
 
 func reset_snap_vector():
 	snap_vector = Vector2.DOWN * 4
@@ -61,11 +64,15 @@ func apply_jump():
 
 func hacky_fixes_for_sloppy_slopes_before_move():
 	was_on_floor_before_move = is_on_floor()
+	position_before_move = position
 
 func hacky_fixes_for_sloppy_slopes_after_move():
 	is_on_floor_after_move = is_on_floor()
+	position_after_move = position
+
 	if was_on_floor_before_move and !is_on_floor_after_move and !jump_input:
 		motion.y = 0
+		position.y = position_before_move.y
 
 func resolve_motion():
 	hacky_fixes_for_sloppy_slopes_before_move()
