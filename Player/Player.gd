@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+const DustEffect = preload('res://Effects/DustEffect.tscn')
+
 export (int) var TARGET_FPS = 60
 export (float) var PLAYER_ACCELERATION = 8 * TARGET_FPS
 export (float) var PLAYER_MAX_SPEED = 64
@@ -60,6 +62,7 @@ func apply_jump_start():
 	if state.jump_input and (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
 		state.motion.y = state.motion.y + (PLAYER_JUMP_FORCE)
 		state.snap_vector = Vector2.ZERO
+		create_dust_effect()
 		print("player jump: start", "on floor:", state.on_floor)
 
 func apply_jump_cancel():
@@ -81,8 +84,18 @@ func avoid_hopping_after_climbing_a_slope():
 		state.motion.y = 0
 		position.y = state.position_before_move.y
 
+func just_landed():
+	var value = !state.was_on_floor_before_move and state.is_on_floor_after_move
+	if value:
+		print("just landed")
+	return value
+
+func create_dust_when_landed():
+	if just_landed():
+		create_dust_effect()
+
 func avoid_stopping_for_a_second_when_landing_on_a_slope():
-	if !state.was_on_floor_before_move and state.is_on_floor_after_move:
+	if just_landed():
 		state.motion.x = state.motion_before_move.x
 
 func prevent_sliding_on_a_slope():
@@ -124,6 +137,13 @@ func play_animation():
 	else:
 		SPRITE_ANIMATOR.play('Idle')
 
+func create_dust_effect():
+	var dust_position = global_position
+	dust_position.x += rand_range(-4, 4)
+	var dust_effect = DustEffect.instance()
+	get_tree().current_scene.add_child(dust_effect)
+	dust_effect.global_position = dust_position
+
 func _physics_process(delta):
 	state.physics_delta = delta
 
@@ -143,3 +163,4 @@ func _physics_process(delta):
 
 	resolve_motion()
 	buffer_for_jump_on_air()
+	create_dust_when_landed()
