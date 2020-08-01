@@ -16,6 +16,10 @@ frame = 0
 [node name="PlayerCameraFollow" parent="Player" index="3"]
 remote_path = NodePath("../../MainCamera")
 
+[node name="JumpOffGroundTimer" type="Timer" parent="Player"]
+wait_time = 0.2
+one_shot = true
+
 [node name="MainCamera" type="Camera2D" parent="."]
 position = Vector2( 16, 8 )
 current = true

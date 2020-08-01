@@ -11,6 +11,7 @@ export (float) var PLAYER_MAX_SLOPE_ANGLE = deg2rad(46)
 export (float) var PLAYER_MAX_FALL_SPEED = -1.5 * PLAYER_JUMP_FORCE
 export onready var SPRITE = $PlayerSprite
 export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
+export onready var JUMP_OFF_GROUND_TIMER = $JumpBufferTimer
 
 var state = {}
 
@@ -56,10 +57,10 @@ func apply_gravity():
 		state.motion.y = min(state.motion.y + (PLAYER_GRAVITY * state.physics_delta), PLAYER_MAX_FALL_SPEED)
 
 func apply_jump_start():
-	if state.jump_input and state.on_floor:
+	if state.jump_input and (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
 		state.motion.y = state.motion.y + (PLAYER_JUMP_FORCE)
 		state.snap_vector = Vector2.ZERO
-		print("player jump: start")
+		print("player jump: start", "on floor:", state.on_floor)
 
 func apply_jump_cancel():
 	if state.jump_input_cancel and state.motion.y < PLAYER_JUMP_FORCE / 2:
@@ -111,6 +112,10 @@ func read_input():
 func check_on_floor():
 	state.on_floor = is_on_floor()
 
+func buffer_for_jump_on_air():
+	if state.was_on_floor_before_move and !state.is_on_floor_after_move:
+		JUMP_OFF_GROUND_TIMER.start()
+
 func play_animation():
 	if !state.on_floor:
 		SPRITE_ANIMATOR.play('Jump')
@@ -137,3 +142,4 @@ func _physics_process(delta):
 	play_animation()
 
 	resolve_motion()
+	buffer_for_jump_on_air()
