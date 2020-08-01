@@ -7,7 +7,7 @@ export var velocity = Vector2.ZERO
 func _ready() -> void:
 	VISIBILITY_NOTIFIER.connect('viewport_exited', self, 'left_viewport')
 
-func left_viewport(viewport):
+func left_viewport(_viewport):
 	print("projectile dead")
 	queue_free()
 
