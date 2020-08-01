@@ -1,9 +1,27 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://World/World.gd" type="Script" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Tileset/StartingArea.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Platforms/MovingPlatform.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Platforms/LeftAndRight.tres" type="Curve2D" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Loop"
+length = 4.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Path2D/PathFollow2D:unit_offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( -2, -2 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
 
 [node name="World" type="Node2D"]
 script = ExtResource( 1 )
@@ -34,4 +52,15 @@ tile_data = PoolIntArray( 327686, 1, 0, 327687, 0, 1, 327688, 536870913, 0, 3276
 [node name="MovingPlatform" parent="." instance=ExtResource( 4 )]
 position = Vector2( -32, 144 )
 
+[node name="MovingPlatform2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 272, 80 )
+
+[node name="Path2D" parent="MovingPlatform2" index="1"]
+curve = ExtResource( 5 )
+
+[node name="AnimationPlayer" parent="MovingPlatform2" index="2"]
+anims/Loop = SubResource( 1 )
+
 [editable path="Player"]
+
+[editable path="MovingPlatform2"]

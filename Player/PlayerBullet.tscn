@@ -9,9 +9,6 @@ radius = 6.0
 [node name="PlayerBullet" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
-[node name="Sprite" parent="." index="0"]
-frame = 0
-
 [node name="Area" type="Area2D" parent="." index="3"]
 
 [node name="CollisionShape" type="CollisionShape2D" parent="Area" index="0"]
