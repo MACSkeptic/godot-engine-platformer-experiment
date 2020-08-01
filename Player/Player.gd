@@ -63,7 +63,7 @@ func apply_jump():
 	apply_jump_cancel()
 
 func hacky_fixes_for_sloppy_slopes_before_move():
-	was_on_floor_before_move = is_on_floor()
+	was_on_floor_before_move = on_floor
 	position_before_move = position
 	motion_before_move = motion
 
@@ -77,7 +77,7 @@ func avoid_stopping_for_a_second_when_landing_on_a_slope():
 		motion.x = motion_before_move.x
 
 func prevent_sliding_on_a_slope():
-	if is_on_floor() and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
+	if is_on_floor_after_move and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
 		position.x = position_before_move.x
 
 func hacky_fixes_for_sloppy_slopes_after_move():
