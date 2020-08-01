@@ -9,13 +9,15 @@ export (float) var PLAYER_GRAVITY = 8 * TARGET_FPS
 export (float) var PLAYER_JUMP_FORCE = -3 * TARGET_FPS
 export (float) var PLAYER_MAX_SLOPE_ANGLE = deg2rad(46)
 export (float) var PLAYER_MAX_FALL_SPEED = -1.5 * PLAYER_JUMP_FORCE
+export onready var SPRITE = $PlayerSprite
+export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
 
 var motion = Vector2.ZERO
 var direction_input = Vector2.ZERO
-var jump_input
-var jump_input_cancel
-var physics_delta
-var on_floor
+var jump_input = false
+var jump_input_cancel = false
+var physics_delta = 0
+var on_floor = false
 
 func read_direction_input():
 	direction_input.x = Input.get_action_strength('player_right') - Input.get_action_strength('player_left')
@@ -54,7 +56,7 @@ func resolve_motion():
 
 func determine_sprite_direction():
 	if direction_input.x != 0:
-		$PlayerSprite.flip_h = direction_input.x < 0
+		SPRITE.flip_h = direction_input.x < 0
 
 func read_input():
 	read_direction_input()
@@ -62,6 +64,14 @@ func read_input():
 
 func check_on_floor():
 	on_floor = is_on_floor()
+
+func play_animation():
+	if !on_floor:
+		SPRITE_ANIMATOR.play('Jump')
+	elif direction_input.x != 0:
+		SPRITE_ANIMATOR.play('Walk')
+	else:
+		SPRITE_ANIMATOR.play('Idle')
 
 func _physics_process(delta):
 	physics_delta = delta
@@ -76,5 +86,7 @@ func _physics_process(delta):
 	apply_friction()
 	apply_gravity()
 	apply_jump()
+
+	play_animation()
 
 	resolve_motion()
