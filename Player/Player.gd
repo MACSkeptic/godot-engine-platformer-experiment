@@ -21,9 +21,9 @@ var physics_delta = 0
 var on_floor = false
 var was_on_floor_before_move = false
 var is_on_floor_after_move = false
+var motion_before_move = Vector2.ZERO
 var position_before_move = Vector2.ZERO
 var position_after_move = Vector2.ZERO
-
 
 func reset_snap_vector():
 	snap_vector = Vector2.DOWN * 4
@@ -65,14 +65,27 @@ func apply_jump():
 func hacky_fixes_for_sloppy_slopes_before_move():
 	was_on_floor_before_move = is_on_floor()
 	position_before_move = position
+	motion_before_move = motion
+
+func avoid_hopping_after_climbing_a_slope():
+	if was_on_floor_before_move and !is_on_floor_after_move and !jump_input:
+		motion.y = 0
+		position.y = position_before_move.y
+
+func avoid_stopping_for_a_second_when_landing_on_a_slope():
+	if !was_on_floor_before_move and is_on_floor_after_move:
+		motion.x = motion_before_move.x
+
+func prevent_sliding_on_a_slope():
+	if is_on_floor() and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
+		position.x = position_before_move.x
 
 func hacky_fixes_for_sloppy_slopes_after_move():
 	is_on_floor_after_move = is_on_floor()
 	position_after_move = position
-
-	if was_on_floor_before_move and !is_on_floor_after_move and !jump_input:
-		motion.y = 0
-		position.y = position_before_move.y
+	avoid_stopping_for_a_second_when_landing_on_a_slope()
+	avoid_hopping_after_climbing_a_slope()
+	prevent_sliding_on_a_slope()
 
 func resolve_motion():
 	hacky_fixes_for_sloppy_slopes_before_move()
