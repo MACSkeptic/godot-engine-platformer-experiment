@@ -13,11 +13,15 @@ export onready var SPRITE = $PlayerSprite
 export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
 
 var motion = Vector2.ZERO
+var snap_vector = Vector2.ZERO
 var direction_input = Vector2.ZERO
 var jump_input = false
 var jump_input_cancel = false
 var physics_delta = 0
 var on_floor = false
+
+func reset_snap_vector():
+	snap_vector = Vector2.DOWN * 4
 
 func read_direction_input():
 	direction_input.x = Input.get_action_strength('player_right') - Input.get_action_strength('player_left')
@@ -35,11 +39,13 @@ func apply_friction():
 		motion.x = lerp(motion.x, 0, PLAYER_FRICTION_IN_GROUND)
 
 func apply_gravity():
-	motion.y = min(motion.y + (PLAYER_GRAVITY * physics_delta), PLAYER_MAX_FALL_SPEED)
+	if !on_floor:
+		motion.y = min(motion.y + (PLAYER_GRAVITY * physics_delta), PLAYER_MAX_FALL_SPEED)
 
 func apply_jump_start():
 	if jump_input and on_floor:
 		motion.y = motion.y + (PLAYER_JUMP_FORCE)
+		snap_vector = Vector2.ZERO
 		print("player jump: start")
 
 func apply_jump_cancel():
@@ -52,7 +58,7 @@ func apply_jump():
 	apply_jump_cancel()
 
 func resolve_motion():
-	motion = move_and_slide(motion, Vector2.UP, false, 4, PLAYER_MAX_SLOPE_ANGLE)
+	motion = move_and_slide_with_snap(motion, snap_vector, Vector2.UP, true, 4, PLAYER_MAX_SLOPE_ANGLE)
 
 func determine_sprite_direction():
 	if direction_input.x != 0:
@@ -81,6 +87,7 @@ func _physics_process(delta):
 	check_on_floor()
 
 	determine_sprite_direction()
+	reset_snap_vector()
 
 	apply_player_acceleration()
 	apply_friction()
