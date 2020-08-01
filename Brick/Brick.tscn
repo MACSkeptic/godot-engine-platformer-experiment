@@ -6,6 +6,9 @@
 extents = Vector2( 8, 8 )
 
 [node name="Brick" type="StaticBody2D"]
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 1 )
