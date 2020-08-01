@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://World/World.gd" type="Script" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Tileset/StartingArea.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Platforms/MovingPlatform.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Platforms/LeftAndRight.tres" type="Curve2D" id=5]
+[ext_resource path="res://Enemies/WalkingEnemy.tscn" type="PackedScene" id=6]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Loop"
@@ -89,6 +90,16 @@ curve = ExtResource( 5 )
 
 [node name="AnimationPlayer" parent="MovingPlatform3" index="2"]
 anims/Loop = SubResource( 2 )
+
+[node name="WalkingEnemy" parent="." instance=ExtResource( 6 )]
+position = Vector2( 122, 80 )
+collision_layer = 1
+collision_mask = 1
+
+[node name="WalkingEnemy2" parent="." instance=ExtResource( 6 )]
+position = Vector2( 272, 128 )
+collision_layer = 1
+collision_mask = 1
 
 [editable path="Player"]
 
