@@ -14,5 +14,23 @@ position = Vector2( 16, 32 )
 [node name="Brick3" parent="." instance=ExtResource( 1 )]
 position = Vector2( 48, 32 )
 
+[node name="Brick4" parent="." instance=ExtResource( 1 )]
+position = Vector2( 32, 96 )
+
+[node name="Brick5" parent="." instance=ExtResource( 1 )]
+position = Vector2( 48, 96 )
+
+[node name="Brick6" parent="." instance=ExtResource( 1 )]
+position = Vector2( 16, 112 )
+
+[node name="Brick7" parent="." instance=ExtResource( 1 )]
+position = Vector2( 0, 96 )
+
+[node name="Brick8" parent="." instance=ExtResource( 1 )]
+position = Vector2( 0, 80 )
+
+[node name="Brick9" parent="." instance=ExtResource( 1 )]
+position = Vector2( -208, 64 )
+
 [node name="Player" parent="." instance=ExtResource( 2 )]
 position = Vector2( 16, 16 )
