@@ -139,10 +139,12 @@ func buffer_for_jump_on_air():
 
 func play_animation():
 	if !state.on_floor:
+		SPRITE_ANIMATOR.playback_speed = 1
 		SPRITE_ANIMATOR.play('Jump')
 	elif state.direction_input.x != 0:
 		SPRITE_ANIMATOR.play('Walk')
 	else:
+		SPRITE_ANIMATOR.playback_speed = 1
 		SPRITE_ANIMATOR.play('Idle')
 
 func create_dust_effect():
