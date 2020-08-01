@@ -34,3 +34,18 @@ position = Vector2( -208, 64 )
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 position = Vector2( 16, 16 )
+
+[node name="PlayerSprite" parent="Player" index="0"]
+frame = 0
+
+[node name="PlayerCameraFollow" parent="Player" index="3"]
+remote_path = NodePath("../../MainCamera")
+
+[node name="MainCamera" type="Camera2D" parent="."]
+position = Vector2( 16, 8 )
+current = true
+smoothing_enabled = true
+editor_draw_limits = true
+editor_draw_drag_margin = true
+
+[editable path="Player"]
