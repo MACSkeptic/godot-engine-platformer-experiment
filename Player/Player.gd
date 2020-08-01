@@ -12,50 +12,56 @@ export (float) var PLAYER_MAX_FALL_SPEED = -1.5 * PLAYER_JUMP_FORCE
 export onready var SPRITE = $PlayerSprite
 export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
 
-var motion = Vector2.ZERO
-var snap_vector = Vector2.ZERO
-var direction_input = Vector2.ZERO
-var jump_input = false
-var jump_input_cancel = false
-var physics_delta = 0
-var on_floor = false
-var was_on_floor_before_move = false
-var is_on_floor_after_move = false
-var motion_before_move = Vector2.ZERO
-var position_before_move = Vector2.ZERO
-var position_after_move = Vector2.ZERO
+var state = {}
+
+func _ready():
+	state.motion = Vector2.ZERO
+	state.snap_vector = Vector2.ZERO
+	state.direction_input = Vector2.ZERO
+	state.jump_input = false
+	state.jump_input_cancel = false
+	state.physics_delta = 0
+	state.on_floor = false
+	state.was_on_floor_before_move = false
+	state.is_on_floor_after_move = false
+	state.motion_before_move = Vector2.ZERO
+	state.position_before_move = Vector2.ZERO
+	state.position_after_move = Vector2.ZERO
 
 func reset_snap_vector():
-	snap_vector = Vector2.DOWN * 4
+	state.snap_vector = Vector2.DOWN * 4
 
 func read_direction_input():
-	direction_input.x = Input.get_action_strength('player_right') - Input.get_action_strength('player_left')
-	direction_input.y = Input.get_action_strength('player_down') - Input.get_action_strength('player_up')
+	state.direction_input.x = Input.get_action_strength('player_right') - Input.get_action_strength('player_left')
+	state.direction_input.y = Input.get_action_strength('player_down') - Input.get_action_strength('player_up')
 
 func read_jump_input():
-	jump_input = Input.is_action_just_pressed('player_jump')
-	jump_input_cancel = Input.is_action_just_released('player_jump')
+	state.jump_input = Input.is_action_just_pressed('player_jump')
+	state.jump_input_cancel = Input.is_action_just_released('player_jump')
 
 func apply_player_acceleration():
-	motion.x = clamp(motion.x + (direction_input.x * PLAYER_ACCELERATION * physics_delta), -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED)
+	state.motion.x = clamp(
+		state.motion.x + (
+			state.direction_input.x * PLAYER_ACCELERATION * state.physics_delta
+		), -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED)
 
 func apply_friction():
-	if (direction_input.x == 0):
-		motion.x = lerp(motion.x, 0, PLAYER_FRICTION_IN_GROUND)
+	if (state.direction_input.x == 0):
+		state.motion.x = lerp(state.motion.x, 0, PLAYER_FRICTION_IN_GROUND)
 
 func apply_gravity():
-	if !on_floor:
-		motion.y = min(motion.y + (PLAYER_GRAVITY * physics_delta), PLAYER_MAX_FALL_SPEED)
+	if !state.on_floor:
+		state.motion.y = min(state.motion.y + (PLAYER_GRAVITY * state.physics_delta), PLAYER_MAX_FALL_SPEED)
 
 func apply_jump_start():
-	if jump_input and on_floor:
-		motion.y = motion.y + (PLAYER_JUMP_FORCE)
-		snap_vector = Vector2.ZERO
+	if state.jump_input and state.on_floor:
+		state.motion.y = state.motion.y + (PLAYER_JUMP_FORCE)
+		state.snap_vector = Vector2.ZERO
 		print("player jump: start")
 
 func apply_jump_cancel():
-	if jump_input_cancel and motion.y < PLAYER_JUMP_FORCE / 2:
-		motion.y = PLAYER_JUMP_FORCE / 2
+	if state.jump_input_cancel and state.motion.y < PLAYER_JUMP_FORCE / 2:
+		state.motion.y = PLAYER_JUMP_FORCE / 2
 		print("player jump: cancel")
 
 func apply_jump():
@@ -63,56 +69,56 @@ func apply_jump():
 	apply_jump_cancel()
 
 func hacky_fixes_for_sloppy_slopes_before_move():
-	was_on_floor_before_move = on_floor
-	position_before_move = position
-	motion_before_move = motion
+	state.was_on_floor_before_move = state.on_floor
+	state.position_before_move = position
+	state.motion_before_move = state.motion
 
 func avoid_hopping_after_climbing_a_slope():
-	if was_on_floor_before_move and !is_on_floor_after_move and !jump_input:
-		motion.y = 0
-		position.y = position_before_move.y
+	if state.was_on_floor_before_move and !state.is_on_floor_after_move and !state.jump_input:
+		state.motion.y = 0
+		position.y = state.position_before_move.y
 
 func avoid_stopping_for_a_second_when_landing_on_a_slope():
-	if !was_on_floor_before_move and is_on_floor_after_move:
-		motion.x = motion_before_move.x
+	if !state.was_on_floor_before_move and state.is_on_floor_after_move:
+		state.motion.x = state.motion_before_move.x
 
 func prevent_sliding_on_a_slope():
-	if is_on_floor_after_move and get_floor_velocity().length() == 0 and abs(motion.x) < 1:
-		position.x = position_before_move.x
+	if state.is_on_floor_after_move and get_floor_velocity().length() == 0 and abs(state.motion.x) < 1:
+		position.x = state.position_before_move.x
 
 func hacky_fixes_for_sloppy_slopes_after_move():
-	is_on_floor_after_move = is_on_floor()
-	position_after_move = position
+	state.is_on_floor_after_move = is_on_floor()
+	state.position_after_move = position
 	avoid_stopping_for_a_second_when_landing_on_a_slope()
 	avoid_hopping_after_climbing_a_slope()
 	prevent_sliding_on_a_slope()
 
 func resolve_motion():
 	hacky_fixes_for_sloppy_slopes_before_move()
-	motion = move_and_slide_with_snap(motion, snap_vector, Vector2.UP, true, 4, PLAYER_MAX_SLOPE_ANGLE)
+	state.motion = move_and_slide_with_snap(state.motion, state.snap_vector, Vector2.UP, true, 4, PLAYER_MAX_SLOPE_ANGLE)
 	hacky_fixes_for_sloppy_slopes_after_move()
 
 func determine_sprite_direction():
-	if direction_input.x != 0:
-		SPRITE.flip_h = direction_input.x < 0
+	if state.direction_input.x != 0:
+		SPRITE.flip_h = state.direction_input.x < 0
 
 func read_input():
 	read_direction_input()
 	read_jump_input()
 
 func check_on_floor():
-	on_floor = is_on_floor()
+	state.on_floor = is_on_floor()
 
 func play_animation():
-	if !on_floor:
+	if !state.on_floor:
 		SPRITE_ANIMATOR.play('Jump')
-	elif direction_input.x != 0:
+	elif state.direction_input.x != 0:
 		SPRITE_ANIMATOR.play('Walk')
 	else:
 		SPRITE_ANIMATOR.play('Idle')
 
 func _physics_process(delta):
-	physics_delta = delta
+	state.physics_delta = delta
 
 	read_input()
 
