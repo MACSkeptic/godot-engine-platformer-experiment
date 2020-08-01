@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 const DustEffect = preload('res://Effects/DustEffect.tscn')
+const PlayerBullet = preload('res://Player/PlayerBullet.tscn')
 
 export (int) var TARGET_FPS = 60
 export (float) var PLAYER_ACCELERATION = 8 * TARGET_FPS
@@ -11,9 +12,14 @@ export (float) var PLAYER_GRAVITY = 8 * TARGET_FPS
 export (float) var PLAYER_JUMP_FORCE = -3 * TARGET_FPS
 export (float) var PLAYER_MAX_SLOPE_ANGLE = deg2rad(46)
 export (float) var PLAYER_MAX_FALL_SPEED = -1.5 * PLAYER_JUMP_FORCE
+export (float) var PLAYER_BULLET_SPEED = 250
+export (float) var PLAYER_FIRE_COOLDOWN = 0.2
 export onready var SPRITE = $PlayerSprite
 export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
 export onready var JUMP_OFF_GROUND_TIMER = $JumpBufferTimer
+export onready var FIRE_COOLDOWN_TIMER = $FireCooldownTimer
+export onready var MUZZLE = $PlayerSprite/PlayerGun/Sprite/Muzzle
+export onready var GUN = $PlayerSprite/PlayerGun
 
 var state = {}
 
@@ -22,6 +28,7 @@ func _ready():
 	state.snap_vector = Vector2.ZERO
 	state.direction_input = Vector2.ZERO
 	state.jump_input = false
+	state.fire_input = false
 	state.jump_input_cancel = false
 	state.physics_delta = 0
 	state.on_floor = false
@@ -126,9 +133,13 @@ func determine_sprite_direction():
 	if state.direction_input.x != 0:
 		look_forward_based_on_movement_and_mouse()
 
+func read_fire_input():
+	state.fire_input = Input.is_action_pressed('player_fire')
+
 func read_input():
 	read_direction_input()
 	read_jump_input()
+	read_fire_input()
 
 func check_on_floor():
 	state.on_floor = is_on_floor()
@@ -150,13 +161,21 @@ func play_animation():
 func create_dust_effect():
 	var dust_position = global_position
 	dust_position.x += rand_range(-4, 4)
-	var dust_effect = DustEffect.instance()
-	get_tree().current_scene.add_child(dust_effect)
-	dust_effect.global_position = dust_position
+	return Utils.instance_scene_on_main(DustEffect, dust_position)
 
 func after_move():
 	buffer_for_jump_on_air()
 	create_dust_when_landed()
+
+func apply_fire():
+	if state.fire_input and FIRE_COOLDOWN_TIMER.time_left <= 0:
+		var bullet_position = MUZZLE.global_position
+		var bullet = Utils.instance_scene_on_main(PlayerBullet, bullet_position)
+		bullet.velocity = Vector2.RIGHT.rotated(GUN.rotation) * PLAYER_BULLET_SPEED
+		bullet.velocity.x *= SPRITE.scale.x
+		bullet.rotation = bullet.velocity.angle()
+		FIRE_COOLDOWN_TIMER.start(PLAYER_FIRE_COOLDOWN)
+		print('pew pew')
 
 func _physics_process(delta):
 	state.physics_delta = delta
@@ -172,6 +191,7 @@ func _physics_process(delta):
 	apply_friction()
 	apply_gravity()
 	apply_jump()
+	apply_fire()
 
 	play_animation()
 

@@ -107,3 +107,8 @@ update_scale = false
 [node name="JumpBufferTimer" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
+
+[node name="FireCooldownTimer" type="Timer" parent="."]
+wait_time = 0.001
+one_shot = true
+autostart = true
