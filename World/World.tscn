@@ -93,13 +93,9 @@ anims/Loop = SubResource( 2 )
 
 [node name="WalkingEnemy" parent="." instance=ExtResource( 6 )]
 position = Vector2( 122, 80 )
-collision_layer = 1
-collision_mask = 1
 
 [node name="WalkingEnemy2" parent="." instance=ExtResource( 6 )]
 position = Vector2( 272, 128 )
-collision_layer = 1
-collision_mask = 1
 
 [editable path="Player"]
 
