@@ -3,7 +3,7 @@ extends KinematicBody2D
 export (int) var TARGET_FPS = 60
 export (float) var PLAYER_ACCELERATION = 8 * TARGET_FPS
 export (float) var PLAYER_MAX_SPEED = 64
-export (float) var PLAYER_FRICTION_IN_AIR = 0.01
+export (float) var PLAYER_FRICTION_IN_AIR = 0.005
 export (float) var PLAYER_FRICTION_IN_GROUND = 0.25
 export (float) var PLAYER_GRAVITY = 8 * TARGET_FPS
 export (float) var PLAYER_JUMP_FORCE = -3 * TARGET_FPS
@@ -46,8 +46,10 @@ func apply_player_acceleration():
 		), -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED)
 
 func apply_friction():
-	if (state.direction_input.x == 0):
+	if state.direction_input.x == 0 and state.on_floor:
 		state.motion.x = lerp(state.motion.x, 0, PLAYER_FRICTION_IN_GROUND)
+	if state.direction_input.x == 0 and !state.on_floor:
+		state.motion.x = lerp(state.motion.x, 0, PLAYER_FRICTION_IN_AIR)
 
 func apply_gravity():
 	if !state.on_floor:
