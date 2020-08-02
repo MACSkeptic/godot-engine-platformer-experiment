@@ -44,6 +44,7 @@ func _ready():
 	state.snap_vector = Vector2.ZERO
 	state.direction_input = Vector2.ZERO
 	state.jump_input = false
+	state.double_jump = true
 	state.fire_input = false
 	state.jump_input_cancel = false
 	state.physics_delta = 0
@@ -81,12 +82,21 @@ func apply_gravity():
 	if !state.on_floor:
 		state.motion.y = min(state.motion.y + (PLAYER_GRAVITY * state.physics_delta), PLAYER_MAX_FALL_SPEED)
 
-func apply_jump_start():
-	if state.jump_input and (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
+func perform_jump():
 		state.motion.y = state.motion.y + (PLAYER_JUMP_FORCE)
 		state.snap_vector = Vector2.ZERO
 		Utils.instance_scene_on_main(JumpEffect, global_position)
-		print("player jump: start", "on floor:", state.on_floor)
+
+func apply_jump_start():
+	if state.jump_input and (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
+		print("player jump: start / ", "on floor: ", state.on_floor, " / double jump: ", state.double_jump)
+		perform_jump()
+	if state.jump_input and state.double_jump and not (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
+		print("player double jump: start / ", "on floor: ", state.on_floor, " / double jump: ", state.double_jump)
+		state.double_jump = false
+		perform_jump()
+
+
 
 func apply_jump_cancel():
 	if state.jump_input_cancel and state.motion.y < PLAYER_JUMP_FORCE / 2:
@@ -112,6 +122,10 @@ func just_landed():
 	if value:
 		print("just landed")
 	return value
+
+func enable_double_jump_when_landed():
+	if state.was_on_floor_before_move or state.is_on_floor_after_move:
+		state.double_jump = true
 
 func create_dust_when_landed():
 	if just_landed():
@@ -182,6 +196,7 @@ func create_dust_effect():
 func after_move():
 	buffer_for_jump_on_air()
 	create_dust_when_landed()
+	enable_double_jump_when_landed()
 
 func apply_fire():
 	if state.fire_input and FIRE_COOLDOWN_TIMER.time_left <= 0:
