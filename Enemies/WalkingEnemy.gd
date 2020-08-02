@@ -38,6 +38,7 @@ func resolve_move():
 	motion = move_and_slide_with_snap(motion, Vector2.DOWN * 4, Vector2.UP, true, 4, deg2rad(46))
 	motion_after_move = motion
 
+# warning-ignore:unused_argument
 func _physics_process(delta: float) -> void:
 	update_motion_right_or_left()
 	determine_sprite_direction()

@@ -65,3 +65,6 @@ collision_mask = 2
 
 [node name="HurtBox" parent="." index="7"]
 COLLISION_SHAPE = ExtResource( 4 )
+
+[node name="EnemyStats" parent="." index="8"]
+MAX_HEALTH = 5

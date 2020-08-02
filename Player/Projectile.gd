@@ -14,6 +14,7 @@ func left_viewport(_viewport):
 func _process(delta: float) -> void:
 	position += velocity * delta
 
+# warning-ignore:unused_argument
 func _on_HitBox_body_entered(body: Node) -> void:
 	print("projectile dead (hit the wall)")
 	queue_free()
