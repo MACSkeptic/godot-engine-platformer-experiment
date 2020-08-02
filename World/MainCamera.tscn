@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://World/MainCamera.gd" type="Script" id=1]
+
+[node name="MainCamera" type="Camera2D"]
+current = true
+smoothing_enabled = true
+editor_draw_limits = true
+editor_draw_drag_margin = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ScreenShakeTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true

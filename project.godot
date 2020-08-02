@@ -28,6 +28,7 @@ config/icon="res://icon.png"
 
 Utils="*res://World/Utils.gd"
 ResourceLoader="*res://World/ResourceLoader.gd"
+Events="*res://World/Events.gd"
 
 [display]
 
