@@ -208,5 +208,9 @@ func _physics_process(delta):
 	after_move()
 
 func _on_HurtBox_hit(damage) -> void:
-	print("player took damage: ", damage)
-	BLINK_ANIMATOR.play('Blink')
+	if not invincible:
+		print("player took damage: ", damage)
+		BLINK_ANIMATOR.play('Blink')
+	else:
+		print("player did not take damage (invincible): ", damage)
+
