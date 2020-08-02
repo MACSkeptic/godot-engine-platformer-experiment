@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://World/World.gd" type="Script" id=1]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Platforms/LeftAndRight.tres" type="Curve2D" id=5]
 [ext_resource path="res://Enemies/WalkingEnemy.tscn" type="PackedScene" id=6]
 [ext_resource path="res://World/MainCamera.tscn" type="PackedScene" id=7]
+[ext_resource path="res://UI/UI.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Loop"
@@ -59,6 +60,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="MainCamera" parent="." instance=ExtResource( 7 )]
+position = Vector2( 16, 8 )
 
 [node name="StartingAreaTileMap" parent="." instance=ExtResource( 3 )]
 tile_data = PoolIntArray( 327686, 1, 0, 327687, 0, 1, 327688, 536870913, 0, 327691, 0, 0, 327692, 0, 2, 327693, 536870913, 0, 393221, 1, 0, 393222, 0, 131078, 393223, 0, 65537, 393224, 0, 131077, 393225, 0, 1, 393226, 0, 1, 393227, 0, 131078, 393228, 0, 131077, 393229, 0, 2, 393230, 536870913, 0, 458756, 1, 0, 458757, 0, 196614, 458758, 0, 131073, 458759, 0, 131073, 458760, 0, 131073, 458761, 0, 131073, 458762, 0, 131073, 458763, 0, 131073, 458764, 0, 131073, 458765, 0, 196613, 458766, 0, 196610, 458767, 536870913, 0, 524288, 0, 196608, 524289, 0, 196609, 524290, 0, 196610, 524304, 0, 196608, 524305, 0, 196609, 524306, 0, 196610, 655362, 0, 196608, 655363, 0, 196610, 655365, 0, 196608, 655366, 0, 6, 655367, 0, 1, 655368, 0, 1, 655369, 0, 1, 655370, 0, 1, 655371, 0, 1, 655372, 0, 5, 655373, 0, 196610, 655375, 0, 196608, 655376, 0, 196610, 720902, 0, 131072, 720903, 0, 65542, 720904, 0, 65537, 720905, 0, 65537, 720906, 0, 65537, 720907, 0, 65541, 720908, 0, 131074, 786439, 0, 65536, 786440, 0, 65537, 786441, 0, 65537, 786442, 0, 65537, 786443, 0, 65538, 851975, 0, 131072, 851976, 0, 65542, 851977, 0, 65537, 851978, 0, 65541, 851979, 0, 131074, 917512, 0, 131072, 917513, 0, 65544, 917514, 0, 131074, 983049, 0, 131075 )
@@ -92,6 +94,8 @@ position = Vector2( 122, 80 )
 
 [node name="WalkingEnemy2" parent="." instance=ExtResource( 6 )]
 position = Vector2( 272, 128 )
+
+[node name="UI" parent="." instance=ExtResource( 8 )]
 
 [editable path="Player"]
 
