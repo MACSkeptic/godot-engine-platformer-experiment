@@ -100,7 +100,7 @@ func just_landed():
 
 func create_dust_when_landed():
 	if just_landed():
-		create_dust_effect()
+		Utils.instance_scene_on_main(JumpEffect, global_position)
 
 func avoid_stopping_for_a_second_when_landing_on_a_slope():
 	if just_landed():
