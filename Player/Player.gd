@@ -194,6 +194,8 @@ func apply_fire():
 		print('pew pew')
 
 func _physics_process(delta):
+
+
 	state.physics_delta = delta
 
 	read_input()
@@ -213,6 +215,7 @@ func _physics_process(delta):
 
 	resolve_motion()
 	after_move()
+
 
 func _on_HurtBox_hit(damage) -> void:
 	if not invincible:
