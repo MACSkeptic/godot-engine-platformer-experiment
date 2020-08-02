@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Player/PlayerBullet.png" type="Texture" id=1]
 [ext_resource path="res://Player/Projectile.gd" type="Script" id=2]
+[ext_resource path="res://Boxes/HitBox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Player/PlayerBulletHitBoxShape.tres" type="Shape2D" id=4]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Project"
@@ -45,8 +47,13 @@ texture = ExtResource( 1 )
 hframes = 2
 
 [node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+visible = false
 rect = Rect2( -4, -4, 8, 8 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Project"
 anims/Project = SubResource( 1 )
+
+[node name="HitBox" parent="." instance=ExtResource( 3 )]
+COLLISION_SHAPE = ExtResource( 4 )
+[connection signal="body_entered" from="HitBox" to="." method="_on_HitBox_body_entered"]
