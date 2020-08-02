@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 const DustEffect = preload('res://Effects/DustEffect.tscn')
+const JumpEffect = preload('res://Effects/JumpEffect.tscn')
 const PlayerBullet = preload('res://Player/PlayerBullet.tscn')
 
 export (int) var TARGET_FPS = 60
@@ -69,7 +70,7 @@ func apply_jump_start():
 	if state.jump_input and (state.on_floor or JUMP_OFF_GROUND_TIMER.time_left > 0):
 		state.motion.y = state.motion.y + (PLAYER_JUMP_FORCE)
 		state.snap_vector = Vector2.ZERO
-		create_dust_effect()
+		Utils.instance_scene_on_main(JumpEffect, global_position)
 		print("player jump: start", "on floor:", state.on_floor)
 
 func apply_jump_cancel():
