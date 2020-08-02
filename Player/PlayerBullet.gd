@@ -11,3 +11,7 @@ func disable_process():
 func enable_process():
 	set_process(true)
 
+
+func _on_HitBox_area_entered(area: Area2D) -> void:
+	print("bullet dead (hit enemy)")
+	queue_free()
