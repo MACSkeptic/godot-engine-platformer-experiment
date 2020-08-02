@@ -17,12 +17,20 @@ export (float) var PLAYER_BULLET_SPEED = 250
 export (float) var PLAYER_FIRE_COOLDOWN = 0.2
 export onready var SPRITE = $PlayerSprite
 export onready var SPRITE_ANIMATOR = $PlayerSpriteAnimator
+export onready var BLINK_ANIMATOR = $BlinkAnimator
 export onready var JUMP_OFF_GROUND_TIMER = $JumpBufferTimer
 export onready var FIRE_COOLDOWN_TIMER = $FireCooldownTimer
 export onready var MUZZLE = $PlayerSprite/PlayerGun/Sprite/Muzzle
 export onready var GUN = $PlayerSprite/PlayerGun
 
+var invincible = false setget set_invincible
 var state = {}
+
+func set_invincible(new_invincible):
+	print("player is invincible: ", new_invincible)
+	invincible = new_invincible
+	if not invincible:
+		BLINK_ANIMATOR.stop()
 
 func _ready():
 	state.motion = Vector2.ZERO
@@ -198,3 +206,7 @@ func _physics_process(delta):
 
 	resolve_motion()
 	after_move()
+
+func _on_HurtBox_hit(damage) -> void:
+	print("player took damage: ", damage)
+	BLINK_ANIMATOR.play('Blink')
